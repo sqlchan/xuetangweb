@@ -1,0 +1,23 @@
+netty是基于Java NIO的网络应用框架，是一个NIO client-server框架，可以快速开发网络应用。是异步框架
+
+netty框架组成：
+
+netty特性：
+
+NIO通信步骤：
+    1、创建serversocketchannel，为他配置非阻塞模式
+    2、绑定监听，配置tcp参数，录入backlog大小等
+    3、创建一个独立的IO线程，用于轮询多路复用器selector
+    4、创建selector，将之前创建的serversocketchannel注册到selector上，并设置监听标志位，selectorkey.accept
+    5、启动IO线程，在循环体中执行selector.select()方法，轮询就绪的通道
+    6、当轮询到处于就绪的通道时，需要进行判断操作位，如果是accept状态，说明是新的客户端接入，则调用accept()方法接收新的客户端
+    7、设置新接入客户端的一些参数，如非阻塞，并将其通道继续注册到selector之中，设置监听标志位
+    8、如果轮询的通道操作位是read，则进行读取，构造buffer对象等
+    9、更细节的还有数据没发完继续发送的问题...
+
+netty实现通信的步骤：
+    1、创建两个NIO线程组，一个专门用于网络事件处理(接收客户端的连接)，另一个专门用于进行网络通信读写
+    2、创建一个serverbootstrap对象，配置netty的一系列参数，例如接收传出数据的缓存大小等等。
+    3、创建一个实际处理数据的类channelInitializer，进行初始化的准备工作，比如设置接受传出数据的字符集、格式、应实际处理数据的接口
+    4、绑定端口，执行同步阻塞方法等待服务器端启动即可
+

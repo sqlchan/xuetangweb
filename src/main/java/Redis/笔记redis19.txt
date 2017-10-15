@@ -1,0 +1,2 @@
+hash数据整条取，key：UUID，value：长json；
+数据结构

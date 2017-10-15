@@ -1,0 +1,75 @@
+# daemonize no 默认情况下，redis不是在后台运行的，如果需要在后台运行，把该项的值更改为yes
+daemonize yes
+
+# 当redis在后台运行的时候，Redis默认会把pid文件放在/var/run/redis.pid，你可以配置到其他地址。
+#当运行多个redis服务时，需要指定不同的pid文件和端口
+pidfile /var/run/redis.pid
+
+# 指定redis运行的端口，默认是6379
+port 6379
+
+# 存储至本地数据库时（持久化到rdb文件）是否压缩数据，默认为yes
+rdbcompression yes
+
+# 本地持久化数据库文件名，默认值为dump.rdb
+dbfilename dump.rdb
+
+# 数据库镜像备份的文件放置的路径。
+#AOF文件也会存放在这个目录下面
+# 注意这里必须制定一个目录而不是文件
+dir ./
+
+# 主从复制. 设置该数据库为其他数据库的从数据库.
+#设置当本机为slav服务时，设置master服务的IP地址及端口，在Redis启动时，它会自动从master进行数据同步
+slaveof <masterip> <masterport>
+
+# 开启append
+appendonly no
+
+#hash将以一种特殊的编码方式（大大减少内存使用）来存储，这里可以设置这两个临界值
+# Redis Hash对应Value内部实际就是一个HashMap，实际这里会有2种不同实现，
+#这个Hash的成员比较少时Redis为了节省内存会采用类似一维数组的方式来紧凑存储，而不会采用真正的HashMap结构，对应的value
+redisObject的encoding为zipmap,
+#当成员数量增大时会自动转成真正的HashMap,此时encoding为ht。
+hash-max-zipmap-entries 512
+hash-max-zipmap-value 64
+
+# list数据类型多少节点以下会采用去指针的紧凑存储格式。
+# list数据类型节点值大小小于多少字节会采用紧凑存储格式。
+list-max-ziplist-entries 512
+list-max-ziplist-value 64
+
+# set数据类型内部数据如果全部是数值型，且包含多少节点以下会采用紧凑格式存储。
+set-max-intset-entries 512
+
+# zsort数据类型多少节点以下会采用去指针的紧凑存储格式。
+# zsort数据类型节点值大小小于多少字节会采用紧凑存储格式。
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+
+可扩展：水平扩展、垂直 扩展
+高可用：n个主节点
+可靠性：数据不丢失
+
+集群策略：
+    主从：主节点，N个从节点；主挂了，从不可用；不好
+    哨兵：哨兵节点监控上面三台机器状态，主挂了后，集群内部选举，将其升级为主节点，主节点修复好了，变为从节点加入进来，redis2.0；也不好用，没法做分布式数据库。
+    集群：多主多从，
+
+解决高并发不是一个技术能解决的，从多个地方，前端，业务，数据库
+
+5:启动  启动redis-server程序，使用当前目录下的conf文件。
+    ./bin/redis-server ./redis.conf
+6:再打开一个终端端口进行连接
+    cd /usr/local/redis../
+    ./bin/redis-cli
+7:redis在后台运行
+    vim redis.conf   (gedit)
+        daemonize yes
+    ps aux|grep redis   看redis后台进程
+8:关闭redis服务器：
+    /usr/local/reids/bin/redis-cli shutdown
+
+
+
+

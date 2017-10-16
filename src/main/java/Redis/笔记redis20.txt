@@ -1,0 +1,25 @@
+config get *  查询配置文件的信息
+dbsize    查看数据库key的数量
+设置密码    requirepass  ***
+进入时 auth ***
+
+哨兵
+对主从服务器进行监控，哨兵机制：
+监控主数据库和从数据库是否正常运行
+主数据库出现故障时，可以自动将从数据库转换为主数据库，实现自动切换
+实现步骤：在其中一台从服务器配置sentinel.conf
+copy文件sentinel.conf到/usr/local/redis/etc中
+修改sentinel.conf文件：
+sentinel monltor mymaster 192.168.1.174 6379 1 #名称、IP、端口、投票选举次数  ////
+sentinel down-after-millisenconds mymaster 5000 #默认1s检测一次，这里配置超过5000ms为宕机  ///
+sentinel fallover-timeout mymaster 9000 00
+sentinel parallel-syncs mymaster 2  //
+sentinel can-fallover mymaster yes
+启动sentinel哨兵
+/usr/local/redis/bin/redis-server /usr/local/redis/etc/sentinel.conf --sentienl &
+查看哨兵相关信息命令
+/usr/local/redis/bin/reids-cli -h 192.168.1.175 -p 6379 info sentinel
+关闭主服务器查看集群信息
+/usr/local/redis/bin/reids-cli -h 192.168.1.174 -p 6379 shutdown
+
+数据量不大 可用spring cache
